@@ -144,16 +144,18 @@ if(isset($_GET["clearall"]))
         <form method="post" class="card">
           <div align="center">
             <img src="../images/<?php echo $row["image"]; ?>" class="w-100" /><br />
+            <div class="card-body">
+                  <h4 class="text-info"><?php echo $row["name"]; ?></h4>
 
-            <h4 class="text-info"><?php echo $row["name"]; ?></h4>
+                <h4 class="text-danger">$ <?php echo $row["price"]; ?></h4>
 
-            <h4 class="text-danger">$ <?php echo $row["price"]; ?></h4>
+                <input type="text" name="quantity" value="1" class="form-control" />
+                <input type="hidden" name="hidden_name" value="<?php echo $row["name"]; ?>" />
+                <input type="hidden" name="hidden_price" value="<?php echo $row["price"]; ?>" />
+                <input type="hidden" name="hidden_id" value="<?php echo $row["id"]; ?>" />
+                <input type="submit" name="add_to_cart" style="margin-top:5px;" class="btn btn-success" value="Add to Cart" />
+            </div>
 
-            <input type="text" name="quantity" value="1" class="form-control" />
-            <input type="hidden" name="hidden_name" value="<?php echo $row["name"]; ?>" />
-            <input type="hidden" name="hidden_price" value="<?php echo $row["price"]; ?>" />
-            <input type="hidden" name="hidden_id" value="<?php echo $row["id"]; ?>" />
-            <input type="submit" name="add_to_cart" style="margin-top:5px;" class="btn btn-success" value="Add to Cart" />
           </div>
         </form>
       </div>
@@ -163,22 +165,31 @@ if(isset($_GET["clearall"]))
       
             </div>
 
-            <div class="col-lg-5">
+            <div class="col-lg-8 m-5">
+              <div class="card">
+                <div class="card-header">
               <h3>Order Details</h3>
-      <div class="table-responsive">
+                  
+                </div>
+                <div class="card-body">
+                  <div class="table-responsive">
       <?php echo $message; ?>
       <div align="right">
-        <a href="index.php?action=clear"><b>Clear Cart</b></a>
+        <a href="index.php?action=clear" class="btn btn-danger"><b>Clear Cart</b></a>
       </div>
       <table class="table table-bordered">
         <tr>
-          <th width="40%">Item Name</th>
-          <th width="10%">Quantity</th>
-          <th width="20%">Price</th>
-          <th width="15%">Total</th>
-          <th width="5%">Action</th>
+          <th>Item Name</th>
+          <th>Quantity</th>
+          <th>Price</th>
+          <th>Total</th>
+          <th>Action</th>
         </tr>
       <?php
+      $order = array(
+        'items' => array(),
+        'total' => ''
+       );
       if(isset($_COOKIE["shopping_cart"]))
       {
         $total = 0;
@@ -186,6 +197,7 @@ if(isset($_GET["clearall"]))
         $cart_data = json_decode($cookie_data, true);
         foreach($cart_data as $keys => $values)
         {
+          $order['items'][] = $values;
       ?>
         <tr>
           <td><?php echo $values["item_name"]; ?></td>
@@ -195,7 +207,7 @@ if(isset($_GET["clearall"]))
           <td><a href="index.php?action=delete&id=<?php echo $values["item_id"]; ?>"><span class="text-danger">Remove</span></a></td>
         </tr>
       <?php 
-          $total = $total + ($values["item_quantity"] * $values["item_price"]);
+         $order['total'] = $total = $total + ($values["item_quantity"] * $values["item_price"]);
         }
       ?>
         <tr>
@@ -203,7 +215,12 @@ if(isset($_GET["clearall"]))
           <td align="right">$ <?php echo number_format($total, 2); ?></td>
           <td></td>
         </tr>
+        <tr>
+          <td><a href="confirmorder.php" class="btn btn-primary">Confirm Order</a></td>
+        </tr>
       <?php
+      // var_dump($order);
+      $_SESSION['order'] = $order;
       }
       else
       {
@@ -216,6 +233,9 @@ if(isset($_GET["clearall"]))
       ?>
       </table>
       </div>
+                </div>
+              </div>
+      
             </div>
           </div>
 
