@@ -79,7 +79,7 @@
                           <th><?php echo $order['paid']; ?></th>
                           <th>
                               <a href="order_details.php?oid=<?php echo $order['id']; ?>" class="btn btn-secondary">Details</a>
-                              <a href="cancel.php?oid=<?php echo $order['id']; ?>" class="btn btn-warning">Cancel</a>
+                           
                           </th>
                          
                         </tr>

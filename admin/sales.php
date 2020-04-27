@@ -1,8 +1,8 @@
 <?php 
   session_start();
   require '../db.php';
-
-  $sql1 = 'SELECT * FROM `orders`';
+  $total = 0;
+  $sql1 = 'SELECT sum(order_details.qty) as qty, name, price FROM `order_details` INNER JOIN product on productID = product.id group by productID';
   $sth1 = $pdo->prepare($sql1);
   $sth1->execute();
 
@@ -30,61 +30,52 @@
         <!-- Container Fluid-->
         <div class="container-fluid" id="container-wrapper">
           <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Orders</h1>
+            <h1 class="h3 mb-0 text-gray-800">Sales</h1>
           </div>
+          
+                <a onclick="window.print();" href="#" class="btn btn-primary mb-3">Print</a>
 
           
             <div class="row">
               <div class="col-lg-12">
               <div class="card mb-4">
-                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                  <!-- <h6 class="m-0 font-weight-bold text-primary">DataTables</h6> -->
-                </div>
+                
                 <div class="table-responsive p-3">
                   <div class="table-responsive">
                   <table class="table align-items-center table-flush">
                     <thead class="thead-light">
                       <tr>
-                        <th>Order ID</th>
-                        <th>Customer Name</th>
-                        <th>Order Date</th>
-                        <th>Amount</th>
-                        <th>Status</th>
-                        <th>Paid</th>
-                        <th>action</th>
+                        <th>Pastries</th>
+                        <th>QTY</th>
+                        <th>Price</th>
+                        <th>Sub Total</th>
+                        
                       </tr>
                     </thead>
-                    <tfoot>
-                      <tr>
-                        <th>Order ID</th>
-                        <th>Customer Name</th>
-                        <th>Order Date</th>
-                        <th>Amount</th>
-                        <th>Status</th>
-                        <th>Paid</th>
-                        <th>action</th>
-                      </tr>
-                    </tfoot>
+                    
                     <tbody>
                       
 
                       <?php foreach ($orders as $order): ?>
                         <tr>
-                          <th><?php echo $order['id']; ?></th>
-                          <th><?php echo $order['customer_name']; ?></th>
-                          <th><?php echo $order['order_date']; ?></th>
-                          <th><?php echo $order['total']; ?></th>
-                          <th><?php echo $order['status']; ?></th>
+                         
+                          <th><?php echo $order['name']; ?></th>
+                          <th><?php echo $order['qty']; ?></th>
+                          <th><?php echo $order['price']; ?></th>
+                          <th><?php echo $order['qty']*$order['price']; ?></th>
                           
-                          <th><?php echo $order['paid']; ?></th>
-                          <th>
-                              <a href="order_details.php?oid=<?php echo $order['id']; ?>" class="btn btn-secondary">Details</a>
-                              
-                          </th>
+                          
                          
                         </tr>
-                      <?php endforeach ;?>
-                      
+                      <?php 
+                      $total = $total + ($order['qty']*$order['price']);
+                  endforeach ;?>
+                   		<tr>
+                   			<td rowspan="2"></td>
+                   			<td rowspan="2"></td>
+                   			<td rowspan="2"><b>Total</b></td>
+                   			<td rowspan="2"><?php echo $total; ?></td>
+                   		</tr>
                       
                     </tbody>
                   </table>

@@ -17,6 +17,12 @@
         <!-- Features -->
       </div>
       <li class="nav-item">
+        <a class="nav-link" href="sales.php">
+          <i class="fab fa-fw fa-wpforms"></i>
+          <span>Sales</span>
+        </a>
+      </li>
+      <li class="nav-item">
         <a class="nav-link" href="orders.php">
           <i class="fab fa-fw fa-wpforms"></i>
           <span>Orders</span>
