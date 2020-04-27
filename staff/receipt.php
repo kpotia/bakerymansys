@@ -2,7 +2,8 @@
   session_start();
   require '../db.php';
 
-  $sql1 = 'SELECT * FROM `orders`';
+  $sql1 = 'SELECT * FROM `orders` WHERE `id` ='. $_GET["oid"] ;
+  $sql2 = 'SELECT * FROM `order_details` WHERE `orderID` ='. $_GET["oid"];
   $sth1 = $pdo->prepare($sql1);
   $sth1->execute();
 

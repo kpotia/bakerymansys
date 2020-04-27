@@ -2,10 +2,11 @@
   session_start();
   require '../db.php';
   $order  = $_SESSION['order'];
-  // var_dump($order);
+  // print_r($order);
 
   if (isset($_POST['order']) && $_POST['order'] =='proceed') {
 
+    // var_dump($_POST);
     if(isset($_POST['status']) && $_POST['status'] !=''){
       $status = $_POST['status'];
     }
@@ -19,8 +20,10 @@
     }
 
     // insert order into table 
-    $sql = "INSERT INTO `orders` ( `customer_name`, `order_date`, `total`, `status`, `paid`) VALUES (:customer_name, CURRENT_TIMESTAMP, :total, :status, :paid)" ;
-    if($stmt1 = $pdo->prepare($sql)){
+    $sql = "INSERT INTO `orders` ( `customer_name`,  `total`, `status`, `paid`) VALUES (:customer_name, :total, :status, :paid)" ;
+// var_dump(date('Ymd h:i:s a'));
+    $stmt1 = $pdo->prepare($sql);
+    if($stmt1){
       $stmt1->bindParam(':customer_name', $cust_name, PDO::PARAM_STR);
       $stmt1->bindParam(':total', $order['total'], PDO::PARAM_STR);
       $stmt1->bindParam(':status', $status, PDO::PARAM_STR);
@@ -29,16 +32,41 @@
       // execute and retrieve order id
       if ($stmt1->execute()) {
         $oid = $pdo->lastInsertId();
-          $sql1 = "INSERT INTO `order_details` (`orderID`, `productID`, `qty`, `sub_total`) VALUES (:orderID, :productID, :qty, :sub_total) ";
 
+          $sql1 = "INSERT INTO `order_details` (`orderID`, `productID`, `qty`, `sub_total`) VALUES ('$oid', :productID, :qty, :sub_total) ";
+             $pdo->beginTransaction();
+                try{
+                  foreach ($order['items'] as $item) {
+                  $sql2 ="INSERT INTO `order_details` (`orderID`, `productID`, `qty`, `sub_total`) VALUES ('$oid','".$item['item_id']."', '".$item['item_quantity']."','".($item["item_quantity"] * $item["item_price"])."')";
+                  $pdo->exec($sql2);
+                  echo $sql2;
+                  }//die();
+                  $pdo->commit();
+                } catch (PDOExecption $e){
+                   echo $e->getMessage();
+                }
+           ?>
+          }
+
+            <script>
+              alert('order saved');
+            </script>
+
+            <?php
+                $_SESSION['order'] = null;
+          setcookie("shopping_cart", "", time() - 3600);
+
+          header('location: receipt.php?oid='.$oid);
+
+      }else {
+
+      var_dump($pdo);
+      var_dump($pdo->errorInfo());
+        die('fuck something went wrong!!!');
 
       }
+     
     }
-    // get order id 
-
-    // insert order item into table 
-
-
   }
  ?>
 
@@ -123,7 +151,7 @@
 
                       <div class="form-group">
                       <label for="exampleFormControlSelect1">Example select</label>
-                      <select class="form-control" id="exampleFormControlSelect1">
+                      <select class="form-control" name="status" id="exampleFormControlSelect1">
                         <option>Waiting</option>
                         <option>Delivered</option>
                         <option>Cancelled</option>
