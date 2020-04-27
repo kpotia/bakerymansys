@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3308
--- Generation Time: Apr 26, 2020 at 04:53 PM
+-- Generation Time: Apr 27, 2020 at 01:53 AM
 -- Server version: 8.0.18
 -- PHP Version: 7.3.12
 
@@ -32,19 +32,12 @@ DROP TABLE IF EXISTS `orders`;
 CREATE TABLE IF NOT EXISTS `orders` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
   `customer_name` varchar(10) DEFAULT NULL,
-  `order_date` datetime DEFAULT NULL,
+  `order_date` datetime DEFAULT CURRENT_TIMESTAMP,
   `total` decimal(8,2) DEFAULT NULL,
   `status` enum('waiting','delivered','canceled') NOT NULL DEFAULT 'waiting',
   `paid` enum('yes','no') NOT NULL DEFAULT 'no',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=6869 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Dumping data for table `orders`
---
-
-INSERT INTO `orders` (`id`, `customer_name`, `order_date`, `total`, `status`, `paid`) VALUES
-(6868, 'patrick', '2020-04-16 00:00:00', '2000.00', 'waiting', 'yes');
+);
 
 -- --------------------------------------------------------
 
@@ -58,7 +51,7 @@ CREATE TABLE IF NOT EXISTS `order_details` (
   `productID` int(11) DEFAULT NULL,
   `qty` int(3) DEFAULT NULL,
   `sub_total` decimal(8,2) DEFAULT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ;
 
 -- --------------------------------------------------------
 
@@ -73,7 +66,7 @@ CREATE TABLE IF NOT EXISTS `product` (
   `image` varchar(255) NOT NULL,
   `price` decimal(10,2) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=878 DEFAULT CHARSET=latin1;
+) ;
 
 --
 -- Dumping data for table `product`
@@ -99,7 +92,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `password` text CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+);
 
 --
 -- Dumping data for table `users`
